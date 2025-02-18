@@ -14,4 +14,39 @@ class ActorsController < ApplicationController
       
     render({ :template => "actor_templates/show" })
   end
+
+  def add
+    x = Actor.new
+    x.name = params.fetch("name")
+    x.dob = params.fetch("dob")
+    x.bio = params.fetch("bio")
+    x.image = params.fetch("image")
+    x.save
+
+    matching_actors = Actor.all
+    @list_of_actors = matching_actors.order({ :created_at => :desc })
+
+    render({ :template => "actor_templates/index" })
+  end
+
+  def update
+    matching_actor = Actor.where({ :id => params.fetch("an_id") })
+    @the_actor = matching_actor.at(0)
+    @the_actor.name = params.fetch("name")
+    @the_actor.dob = params.fetch("dob")
+    @the_actor.bio = params.fetch("bio")
+    @the_actor.image = params.fetch("image")
+
+    @the_actor.save
+
+    redirect_to("/actors/#{@the_actor.id}")
+  end
+
+  def delete
+    matching_actor = Actor.where({ :id => params.fetch("an_id") })
+    the_actor = matching_actor.at(0)
+    the_actor.destroy
+
+    redirect_to("/actors")
+  end
 end
